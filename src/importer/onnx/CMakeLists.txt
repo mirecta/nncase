@@ -98,6 +98,7 @@ set(ONNX_IMPORTER_SOURCES
 set(ONNX_IMPORTER_OPS_SOURCES
     ops/activations.cpp
     ops/binary.cpp
+    ops/batch_normalization.cpp
     ops/concat.cpp
     ops/constant.cpp
     ops/conv.cpp
@@ -108,6 +109,7 @@ set(ONNX_IMPORTER_OPS_SOURCES
     ops/reduce.cpp
     ops/reshape.cpp
     ops/resize.cpp
+    ops/shape.cpp
     ops/slice.cpp
     ops/softmax.cpp
     ops/squeeze.cpp
