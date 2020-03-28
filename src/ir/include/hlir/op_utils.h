@@ -91,7 +91,7 @@ namespace hlir
 
         return shape;
     }
-
+    
     inline shape_t normalize_reshape(const shape_t &in_shape, const axis_t &new_shape)
     {
         shape_t result(new_shape.size());
@@ -122,7 +122,7 @@ namespace hlir
     inline shape_t get_binary_output_shape(const shape_t &input_a_shape, const shape_t &input_b_shape)
     {
         shape_t out_shape;
-
+    
         const auto dest_dims = std::max(input_a_shape.size(), input_b_shape.size());
         const auto in_a_ext = dest_dims - input_a_shape.size();
         const auto in_b_ext = dest_dims - input_b_shape.size();
@@ -134,6 +134,7 @@ namespace hlir
 
             const auto in_a = in_a_dim < 0 ? 1 : input_a_shape[in_a_dim];
             const auto in_b = in_b_dim < 0 ? 1 : input_b_shape[in_b_dim];
+            
             if (in_a == in_b)
                 out_shape.push_back(in_a);
             else if (in_a == 1)
@@ -260,6 +261,34 @@ namespace hlir
                 new_shape.push_back(dim);
         }
 
+        return new_shape;
+    }
+    inline shape_t get_gather_output_shape(const shape_t &input_shape, const shape_t &indices_shape, int32_t axis, int32_t &to_copy, int32_t &loops, int32_t &mult){
+
+        shape_t new_shape;
+        for(int i = 0; i < input_shape.size(); ++i ){
+            if (i < axis){
+                loops += (input_shape[i]);
+                mult+= (input_shape[i]);
+            }
+            if (i > axis){
+                to_copy += (input_shape[i]);
+                mult+= (input_shape[i]);
+            }
+            if(i == axis){ 
+                for(int j = 0; j < indices_shape.size(); ++j){
+                    new_shape.push_back(indices_shape[j]);
+                }
+            }else{
+                new_shape.push_back(input_shape[i]);
+            }
+        }
+        if (to_copy == 0){
+            to_copy = 1;
+        }
+        if (loops == 0){
+            loops = 1;
+        }
         return new_shape;
     }
 }
