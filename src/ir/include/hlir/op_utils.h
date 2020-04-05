@@ -91,7 +91,7 @@ namespace hlir
 
         return shape;
     }
-    
+        
     inline shape_t normalize_reshape(const shape_t &in_shape, const axis_t &new_shape)
     {
         shape_t result(new_shape.size());

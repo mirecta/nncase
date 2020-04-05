@@ -13,11 +13,12 @@
  * limitations under the License.
  */
 #include <hlir/op_utils.h>
-#include <llir/ops/gather.h>
+#include <hlir/ops/gather.h>
 #include <xtensor/xarray.hpp>
+#include <llir/ops/gather.h>
 
 using namespace nncase;
-using namespace nncase::llir;
+using namespace nncase::hlir;
 
 gather::gather(shape_t input_shape, xt::xarray<int32_t> indices, int32_t axis)
     :indices_(std::move(indices))
@@ -27,5 +28,12 @@ gather::gather(shape_t input_shape, xt::xarray<int32_t> indices, int32_t axis)
     ,mult_(0)
 { 
     add_input("input", dt_float32, input_shape);
-    add_output("output", dt_float32,hlir::get_gather_output_shape(input_shape,  indices.shape(), axis_, to_copy_, loops_, mult_));
+    add_output("output", dt_float32, hlir::get_gather_output_shape(input_shape,  indices.shape(), axis_, to_copy_, loops_, mult_));
+}
+
+void gather::compile(hlir_compile_context &context)
+{
+    auto l_c = context.graph.emplace<llir::gather>(input().shape(), indices_, axis_);
+    context.add_input(input(), l_c->input());
+    context.add_output(output(), l_c->output());
 }

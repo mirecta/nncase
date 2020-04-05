@@ -19,7 +19,7 @@
 
 namespace nncase
 {
-namespace llir
+namespace hlir
 {
     class gather : public node
     {
@@ -30,11 +30,11 @@ namespace llir
         output_connector &output() { return output_at(0); }
 
         int32_t axis() const noexcept { return axis_; }
-        int32_t to_copy() const noexcept { return to_copy_; }
-        int32_t loops() const noexcept { return loops_; }
-        int32_t mult() const noexcept { return mult_; }
-        xt::xarray<int32_t> indices() const noexcept { return indices_; }
+        const xt::xarray<int32_t> &indices() const noexcept { return indices_; }
+        
         gather(shape_t input_shape, xt::xarray<int32_t> indices, int32_t axis);
+        
+        void compile(hlir_compile_context &context) override;
 
     private:
         xt::xarray<int32_t> indices_;

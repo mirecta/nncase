@@ -493,6 +493,45 @@ namespace runtime
             memory_range table;
             memory_range output;
         };
+
+        struct gather_options : public simple_node_body<gather_options>
+        {
+            memory_range input;
+            memory_range output;
+            runtime_shape_t out_shape;
+            int32_t ind_cnt;
+            int32_t axis;
+            int32_t to_copy;
+            int32_t loops;
+            int32_t mult;
+            xtl::span<const int32_t> indices;
+
+            void deserialize(span_reader &reader)
+            {
+                reader.read(input);
+                reader.read(output);
+                reader.read(out_shape);
+                reader.read(ind_cnt);
+                reader.read(axis);
+                reader.read(to_copy);
+                reader.read(loops);
+                reader.read(mult);
+                reader.read_span(indices, ind_cnt);
+            }
+            
+            void serialize(binary_writer &writer) const
+            {
+                writer.write(input);
+                writer.write(output);
+                writer.write(out_shape);
+                writer.write(ind_cnt);
+                writer.write(axis);
+                writer.write(to_copy);
+                writer.write(loops);
+                writer.write(mult);
+                writer.write_array(indices);
+            }
+        };
     }
 }
 }

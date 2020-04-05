@@ -31,6 +31,7 @@
 #include <llir/ops/table_lookup.h>
 #include <llir/ops/transpose.h>
 #include <llir/ops/unary.h>
+#include <llir/ops/gather.h>
 #include <runtime/neutral/neutral_ops_body.h>
 
 using namespace nncase;
@@ -391,6 +392,24 @@ namespace codegen
 
             return body;
         });
+
+         register_emitter(op_gather, [](node &node, codegen_context &context) {
+            auto &rnode = static_cast<gather &>(node);
+            auto body = std::make_unique<node_body_impl<rop_gather, gather_options>>();
+
+            body->input = context.get_allocation(rnode.input());
+            body->output = context.get_allocation(rnode.output());
+            body->out_shape = to(rnode.output().shape());
+            body->ind_cnt = rnode.indices().size();
+            body->axis = rnode.axis();
+            body->to_copy = rnode.to_copy();
+            body->loops = rnode.loops();
+            body->mult = rnode.mult();
+            body->indices = rnode.indices();
+
+            return body;
+        });
+
     }
 }
 }
